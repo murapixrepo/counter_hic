@@ -18,6 +18,7 @@ import random
 import itertools
 import sys
 import time
+from collections import deque
 
 murapix_path = os.path.join(os.path.dirname(__file__),'..','..')
 sys.path.append(murapix_path)
@@ -36,22 +37,39 @@ missile_direction = {None: (0, 0), UP: (0, -MISSILE_SPEED), DOWN: (0, MISSILE_SP
                      LEFT: (-MISSILE_SPEED, 0), RIGHT: (MISSILE_SPEED, 0)}
 
 EMOTYPES = dict(Broccoli="broccoli_8px.bmp",
-				Robot = "robot_8px.bmp",
-				SUW = "startupweekend_8px.bmp",
-				Factory = "factory_8px.bmp",
+                Robot = "robot_8px.bmp",
+                SUW = "startupweekend_8px.bmp",
+                Factory = "factory_8px.bmp",
 )
 
 EMOTYPE_COLORS = dict(Broccoli=(120,170,71),
-				Robot = (255,30,30),
-				SUW = (149,96,255),
-				Factory = (30,185,234),
+                Robot = (255,30,30),
+                SUW = (149,96,255),
+                Factory = (30,185,234),
 )
 
 EMOTYPES_FINAL = dict(Broccoli="broccoli_64px.bmp",
-				Robot = "robot_64px.bmp",
-				SUW = "startupweekend_64px.bmp",
-				Factory = "factory_64px.bmp",
+                Robot = "robot_64px.bmp",
+                SUW = "startupweekend_64px.bmp",
+                Factory = "factory_64px.bmp",
 )
+
+
+EMOTYPES_BTN = {4 : 'SUW',
+                5 : 'Broccoli',
+                6 : 'Robot',
+                7 : 'Factory'}
+
+UP = 0
+RIGHT = 1
+DOWN = 2
+LEFT = 3
+SUW = 4
+BROCCOLI = 5
+ROBOT = 6
+FACTORY = 7
+
+PWD = [0,0,2,2,1,3,1,3]
 
 
 
@@ -74,27 +92,21 @@ class Counter(AllActiveSprites):
         super().__init__()
         self.color = (250,250,255)
         self.time_left = total_time * self.fps
-        font = pygame.font.Font(None, font_size)
-        text = font.render(
-                    str((self.time_left // self.fps) + 1), False, self.color)
+        self.font = pygame.font.Font(None, font_size)
         
-        
-        
-        self.image = text
-        self.rect = text.get_rect()
+        self.set_counter_image()
+               
+        self.rect = self.image.get_rect()
         self.rect.center = pos
-        self.paused = False
+        self.paused = True
 
     def update(self):
-        font = pygame.font.Font(None, 8)
         if not self.paused:
-            self.time_left -= 1
+            self.time_left -= 1           
+            self.set_counter_image()
+
             
-        
-        text = font.render(
-                    str((self.time_left // self.fps) + 1), False, self.color)
-        self.image = text
-        if self.respawnTime < 1:
+        if self.time_left < 1:
             self.kill()
             
     def set_timer(self, time_s):
@@ -102,6 +114,7 @@ class Counter(AllActiveSprites):
         set time in seconds
         """
         self.time_left= time_s * self.fps
+        self.set_counter_image()
         
     def switch_pause(self,set_it = None):
         """
@@ -113,26 +126,67 @@ class Counter(AllActiveSprites):
         else:
             self.paused = set_it
         
-               
+        if self.paused:
+            w, h= self.image.get_size()
+            pygame.draw.rect(self.image,self.color,(w//5,0,w//5,h))
+            pygame.draw.rect(self.image,self.color,(3*w//5,0,w//5,h))
+        else:
+            self.set_counter_image()
+            
+            
+    def set_counter_image(self):
+        text = self.font.render(
+                    str((self.time_left // self.fps)), False, self.color)
+        self.image = text     
+            
+        
+class Show_Admin(AllActiveSprites):
+    def __init__(self,playernumber,pos):
+        super().__init__()
+        self.color = (150,10,10)
+        self.time_left = 2 * self.fps
+        self.font = pygame.font.Font(None, 10)
+        text = self.font.render(
+                    str(playernumber), False, self.color)
+        
+        
+        
+        self.image = text
+        self.rect = text.get_rect()
+        self.rect.center = pos
+        
+    def update(self):
+        self.time_left -= 1
+        print('Hello show admin!{0}'.format(self.rect))
+        if self.time_left < 1:
+            self.kill()
         
            
 class Final_Image(AllActiveSprites):
-    def __init__(self, emoticon, position, max_size):
+    def __init__(self, emotype, start_x, end_position, max_size):
         super().__init__()
-        self.speed_of_growth = 1.1
-        self.size_float = 8.
-        self.max_size = max_size
+        
+        
+        image_path = os.path.join('images',EMOTYPES_FINAL[emotype])
+        self.image = pygame.image.load(image_path)
+        self.emotype = emotype
+        self.end_position = end_position
+        
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (start_x, end_position[1])
+        
         
     def update(self):
-        if self.size_float < self.max_size:
-            self.size_float *= self.speed_of_growth
+        if self.rect.x > self.end_position[0]+10:
+            self.rect.x -= 10
+        else:
+            self.rect.x = self.end_position[0]
             
         
         
 
 
 class Emoticon(AllActiveSprites):
-    pool = pygame.sprite.Group()
     active = pygame.sprite.Group()
     score = dict(zip(EMOTYPES.keys(),[0]*4))
     def __init__(self, start_position, emotype):
@@ -148,7 +202,14 @@ class Emoticon(AllActiveSprites):
         
         self.rect = self.image.get_rect()
         self.rect.center = start_position
-           
+        
+        self.add(self.active)
+        
+        
+    @classmethod
+    def reset_score(cls):
+        cls.score = dict(zip(EMOTYPES.keys(),[0]*4))
+    
         
     @classmethod
     def add_score(cls, emotype):
@@ -156,12 +217,12 @@ class Emoticon(AllActiveSprites):
     
 
     def update(self):
-        self.rect.centery += 1
+        self.rect.centery -= 1
         self.rect.centerx += random.choice((-1,1))
         
     def kill_it(self):
         self.kill()
-        return EMOTYPE_COLORS(self.emotype)
+        return EMOTYPE_COLORS[self.emotype]
         
     
 
@@ -174,6 +235,26 @@ class PitchCounter(Murapix):
                                     'gamepad4btn.svg')
         self.admin = 0
         
+        pygame.joystick.init()
+        self.NoP = 0#number of players (use joystick)
+        self.loop = 0
+
+    def set_gamepads(self):  
+        
+        NoJS = [x.startswith('js') for x in os.listdir("/dev/input")].count(True)
+        if self.NoP != NoJS:
+            print('New players! {0} => {1}'.format(self.NoP, NoJS))
+            pygame.joystick.quit()
+            pygame.joystick.init()
+            self.NoP = pygame.joystick.get_count()#number of players (use joystick)
+            self.joysticks = [pygame.joystick.Joystick(x) 
+                         for x in range(self.NoP)]   
+            self.btn_queue = [dict(antispam = 0,
+                              queue = deque(maxlen=8)
+                              ) for x in range(self.NoP)]
+            for joy in self.joysticks:
+                joy.init()
+        
     
     def setup(self):
         self.SCREENRECT = self.scratch.get_rect()
@@ -184,34 +265,30 @@ class PitchCounter(Murapix):
         
         
         self.setup_ingame()
-        self.setup_winner()
-        self.setup_comm()
         
         #scene status for while loops
         self.current_scene = 0
         self.scene_select = {
                 0: self.ingame_loop,
-                1: self.winner_loop,
-                2: self.comm_loop
+                1: self.winner_loop
                 }
         
     def setup_ingame(self):
         """
         setup the in game screen
         """
+        print('Setting up voting screen')
         #initialization of sprites
         AllActiveSprites.fps = FPS
+        Emoticon.reset_score()#reset scores to 0
+        self.emo_count = 0 #number of votes casted
         
         
         #Prepare the joysticks
         pygame.joystick.init()
         self.joysticks = None
-        if pygame.joystick.get_count() > 0:
-            self.NoP = pygame.joystick.get_count()#number of players (use joystick)
-            self.joysticks = [pygame.joystick.Joystick(x) 
-                         for x in range(self.NoP)]            
-        else:
-            self.NoP = 1 #1 player (keyboard)
+        self.set_gamepads()
+        
                 
         #prepare background    
         self.background = pygame.Surface(
@@ -223,8 +300,13 @@ class PitchCounter(Murapix):
         
         self.scratch.blit(self.background, (0, 0))
         self.sprites = pygame.sprite.RenderUpdates()
-        self.counter = Counter()
-        self.sprites.add()
+        self.counter = Counter(60*3,
+                               self.SCREENRECT.center,
+                               min(
+                                   self.SCREENRECT.height//2,
+                                   self.SCREENRECT.width//2
+                                   ))
+        self.sprites.add(self.counter)
         AllActiveSprites.allactivesprites = self.sprites
         
         
@@ -232,47 +314,81 @@ class PitchCounter(Murapix):
         """
         setup the second screen once a winner is selected
         """
-        self.winnertime = FPS*4  
-        self.wevegotawinner = self.winnertime#how many seconds it shows the winner
-        self.winner_radius = max(self.height,self.width)
-        self.now = time.time()
+        print('setting up emoticons that won')
+        self.sprites.empty()
+        NoPannels = self.max_number_of_panels
+        self.winnertime = FPS*(NoPannels + 3)
         
-    def setup_comm(self):
-        """
-        setup the third screen showing the ad once the game is finished.
-        """
-        self.dude = 0
-        self.dude_2 = 0
-        self.dude_3 = 0
-        self.dude_4 = 0
+        emonames, scores = zip(*Emoticon.score.items())
+        emonames, scores = list(emonames), list(scores)
         
-        self.background2 = pygame.Surface((self.SCREENRECT.size[0],
-                                           self.SCREENRECT.size[1])).convert(self._screen)
-        self.background2.fill((0, 0, 0))        
+        if sum(scores)==0:
+            scores = 1,1,1,1
         
-        self.font = pygame.font.Font(None, self.height//3)
-        self.text = self.font.render(
-                    "MURAPIX", False, (128,204,240))
-        self.font2 = pygame.font.Font(None, self.height//4)
-        self.text2 = self.font2.render(
-                    "soon on your", False, (128,204,240))
-        self.text3 = self.font2.render(
-                    "favorite places'", False, (128,204,240))
-        self.text4 = self.font.render(
-                    "Walls", False, (128,204,240))
+        temp_scores = scores
+        if sum(scores) > NoPannels:
+            for i in range(len(scores)):
+                temp_scores[i] = round((scores[i]/sum(scores))*NoPannels)
+            scores = temp_scores
+        
+        score = dict(zip(emonames,scores))      
+        self.winners = []
+        
+        panadd = get_panel_adresses(self.mapping,self.led_rows)
+        
+        
+        
+        for k, v in score.items():
+            for i in range(v):
+                try:
+                    (x,y),(w,h) = next(panadd)
+                    self.winners.append(Final_Image(k,self.SCREENRECT.width, (x,y), self.led_rows))
+                except StopIteration:
+                    return
+        
+        
+    
     
     def logic_loop(self):
         clock = self.clock
         self.scene_select[self.current_scene]()
-        msg = "\r Raw time: {0}, tick time: {1}, fps: {2}".format(clock.get_rawtime(),
-                                                            clock.get_time(),
-                                                            clock.get_fps())
-        print(msg, end="")
+        #msg = "\r Raw time: {0}, tick time: {1}, fps: {2}".format(clock.get_rawtime(),
+        #                                                    clock.get_time(),
+        #                                                    clock.get_fps())
+        beg = ""
+        msg = ""
+        for i, s in enumerate(self.btn_queue):
+            beg += "\r"
+            msg += "{0}: queue = {1}\n".format(i, s['queue'])
+        
+        msg = beg + msg
+        
+        #print(msg, end="")
     def graphics_loop(self):
         pass
 
 
-
+    def do_admin_stuff(self,joy):
+        if joy != self.admin:
+            return
+        
+        last_keys = self.btn_queue[self.admin]['queue']
+        
+        if last_keys[-1] == ROBOT:
+            self.counter.switch_pause()
+        if len(last_keys) <2:
+            return
+        if (last_keys[-1] == FACTORY) and (last_keys[-2] ==SUW):
+            self.counter.switch_pause(set_it=True)
+            self.counter.set_timer(60*3)
+                
+        elif (last_keys[-1] == FACTORY) and (last_keys[-2] ==BROCCOLI):
+            self.counter.switch_pause(set_it=True)
+            self.counter.set_timer(5*1)#TODO: fix to 60 seconds
+                
+        
+            
+            
     def ingame_loop(self):
         self.focus = True
         for event in pygame.event.get():
@@ -280,96 +396,72 @@ class PitchCounter(Murapix):
                 or ((event.type == pgl.KEYDOWN) 
                     and (event.key == pgl.K_ESCAPE))):
                 self.RUNNING = False
-            if ((event.type == pygame.KEYDOWN)
-                  and (event.key in direction.keys())):
-                cannon_dir = direction[event.key]
-                for admiral in Admiral.active:
-                    admiral.shoot_cannon(cannon_dir)
+                
+            if (event.type == pygame.JOYBUTTONUP):
+                joy = event.joy
+                btn = event.button
+                status = self.btn_queue[joy]
+                pressed = []
+                
+                status['queue'].append(btn)
+                if btn >3:
+                    #list of strings!
+                    pressed.append(EMOTYPES_BTN[btn])
+                if joy == self.admin:
+                    #do admin stuff
+                    self.do_admin_stuff(joy)
+                else:
+                    #if password entered, give admin role to that player
+                    if list(status['queue']) == PWD:
+                        self.admin = joy
+                        self.sprites.add(Show_Admin(self.admin,
+                                                        (self.SCREENRECT.right-32,
+                                                         self.SCREENRECT.bottom-32))
+                                        )
                     
-            if (self.joysticks and (event.type == pgl.JOYBUTTONDOWN)):
-                for admiral in Admiral.active:
-                    playernumber = admiral.playernumber
-                    
-                    joystick = self.joysticks[playernumber]
-                    pressed = []
-                    for i in range(joystick.get_numbuttons()):
-                        if joystick.get_button(i):
-                            pressed.append(i)
+                    if status['antispam'] < 1 and len(pressed)>0:
+                        #do player stuff
+                        status['antispam'] = self.fps
+                        y_pos = self.SCREENRECT.bottom
                         
-                    cannon_dir=None
-                    if joystick.get_button(0):
-                        cannon_dir = UP
-                    if joystick.get_button(1):
-                        cannon_dir = RIGHT
-                    if joystick.get_button(2):
-                        cannon_dir = DOWN
-                    if joystick.get_button(3):
-                        cannon_dir = LEFT
-                    if cannon_dir is not None:
-                        admiral.shoot_cannon(cannon_dir)
+                        x_pos = random.randint(0,self.SCREENRECT.width)
                         
-            if (event.type == pgl.ACTIVEEVENT):
-                print(event)
+                        emo = Emoticon((x_pos,y_pos),pressed[0])#only first event registered
+                        emo.rect = emo.rect.clamp(self.SCREENRECT)
+                        self.sprites.add(emo)
+                        
+                        
+        for status in self.btn_queue:
+            #does nothing, reduce by one antispam countdown
+            status['antispam'] = max(0,status['antispam'] -1)
                 
-        #interaction between admirals, their missiles and other objects
-        for admiral in Admiral.active:
-            playernumber = admiral.playernumber
-            if self.joysticks:
-                joystick = self.joysticks[playernumber]
-                joystick.init()
-                x_axis, y_axis = handle_joystick(joystick)
-            else:
-                keys = pygame.key.get_pressed()
-                x_axis = keys[pgl.K_d] - keys[pgl.K_q]
-                y_axis = keys[pgl.K_s] - keys[pgl.K_z]
-            for obstacle in pygame.sprite.spritecollide(admiral,self.obstacles,False):
-                m_pos = Vector2(obstacle.rect.center)
-                a_pos = Vector2(admiral.rect.center)
-                new_speed = a_pos-m_pos
-                new_speed.scale_to_length(
-                            max(1,admiral.current_speed.length())
-                                         )
-                admiral.current_speed = new_speed
-                admiral.move(0, 0)
-            if not self.SCREENRECT.contains(admiral.rect):
-                new_speed = - admiral.current_speed
-                new_speed.scale_to_length(
-                            max(1,new_speed.length())
-                                         )
-                admiral.current_speed = new_speed
-                admiral.move(0, 0)
-                admiral.rect = admiral.rect.clamp(self.SCREENRECT)
-                
-            else:
-                admiral.move(x_axis, y_axis)                
-                
-            for missile in admiral.active_missile:
-                for ad2 in pygame.sprite.spritecollide(missile, Admiral.active,False):
-                    if ad2 != admiral and not ad2.invincible:
-                        explosion = missile.table()
-                        explosion.add(self.alldrawings)
-                        counter = ad2.table()
-                        counter.add(self.sprites)
-                        admiral.score +=1
-                if pygame.sprite.spritecollideany(missile, self.obstacles):
-                    explosion = missile.table()
-                    explosion.add(self.alldrawings)
-                
-                if not self.SCREENRECT.contains(missile.rect):
-                    missile.table()
-                
-        #animate background
-        self.bg_t +=1
-        if self.bg_t>=self.bg_period:
-            self.bg_t = 0
-        self.scratch.blit(self.background, (0, 2*self.bg_t//(self.bg_period)))#add 1 pixel or not in vertical axis
+        
+        for emo in Emoticon.active:
+            if not self.SCREENRECT.contains(emo):
+                col = emo.kill_it()
+                self.emo_count += 1
+                bg_w, bg_h = self.background.get_size()
+                x,y = self.emo_count%bg_w, self.emo_count//bg_w
+                y = y - (y//bg_h)*bg_h
+                self.background.set_at((x,y),col)
+        
+        
+        
+        self.scratch.blit(self.background,(0,0))#
         self.sprites.update()
         self.sprites.draw(self.scratch)
-        self.alldrawings.update()
         
-        global INGAME
-        if not INGAME:
+        
+        if not self.counter.alive():
+            print(Emoticon.score)            
+            self.setup_winner()
             self.current_scene +=1
+            
+        self.loop +=1
+        if (self.loop % self.fps) == 0:
+            self.set_gamepads()
+            self.loop = 0
+        
         
         
     def winner_loop(self):
@@ -378,81 +470,41 @@ class PitchCounter(Murapix):
                 or ((event.type == pgl.KEYDOWN) 
                     and (event.key == pgl.K_ESCAPE))):
                 self.RUNNING = False
-        
-        winnertime = self.winnertime
-        self.wevegotawinner -= 1
-        if self.wevegotawinner < (winnertime-FPS) and self.wevegotawinner > 2*FPS:
-            
-            
-            self.winner_radius -= max(self.height,self.width)/(winnertime - 3*FPS)
-            surface = pygame.Surface(self.scratch.get_size(), depth=24)
-            key = (255,255,255)#pure white for transparency
-            surface.fill((0,0,0))
-            if self.winner_radius > 18:
-                pygame.draw.circle(surface,
-                                   key,
-                                   WINNER.rect.center,
-                                   int(self.winner_radius))
-            else:                
-                pygame.draw.circle(surface,
-                                   key,
-                                   WINNER.rect.center,
-                                   18)
-            surface.set_colorkey(key)
-            self.scratch.blit(surface, (0,0))
-        elif self.wevegotawinner < 2*FPS:
-            font = pygame.font.Font(None, self.height//3)
-            text = font.render(
-                        "WINNER", False, (255,255,255))
-            
-            self.scratch.blit(text,(self.width//4, self.height//2))
+            if (event.type == pygame.JOYBUTTONUP):
+                joy = event.joy
+                btn = event.button
+                status = self.btn_queue[joy]                
+                status['queue'].append(btn)
+                if joy == self.admin:
+                    #do admin stuff
+                    self.do_admin_stuff(joy)
+                else:
+                    #if password entered, give admin role to that player
+                    if list(status['queue']) == PWD:
+                        self.admin = joy
+                        self.sprites.add(Show_Admin(self.admin))
         
         
-        if self.wevegotawinner < 1:
-            self.current_scene +=1
+        if self.winnertime % self.fps == 0:
+            try:
+                self.sprites.add(self.winners.pop(0))
+            except IndexError:
+                pass
         
+        self.scratch.blit(self.background,(0,0))#
+        self.sprites.update()
+        self.sprites.draw(self.scratch)
         
-        
-        
-    
-    def comm_loop(self):
-        
-        for event in pygame.event.get():
-            if ((event.type == pgl.QUIT) 
-                or ((event.type == pgl.KEYDOWN) 
-                    and (event.key == pgl.K_ESCAPE))):
-                self.RUNNING = False
-        
-        background = self.background2
-        
-        self.scratch.blit(background, (0,0))
-        
-        if self.dude < self.width-(self.width//2 - self.text.get_width()//2):
-            self.dude +=2*60/FPS
-        elif self.dude_2 < self.width-(self.width//2 - self.text2.get_width()//2):
-            self.dude_2 += 2*60/FPS
-        elif self.dude_3 < self.width-(self.width//2 - self.text3.get_width()//2):
-            self.dude_3 += 2*60/FPS
-        elif self.dude_4 < self.width-(self.width//2 - self.text4.get_width()//2):
-            self.dude_4 += 2*60/FPS
-        self.scratch.blit(self.text,
-                          (self.width-int(self.dude), 
-                           self.height//8))
-        self.scratch.blit(self.text2,
-                          (self.width-int(self.dude_2), 
-                           3*self.height//8))
-        self.scratch.blit(self.text3,
-                          (self.width-int(self.dude_3), 
-                           4.5*self.height//8))
-        self.scratch.blit(self.text4,
-                          (self.width-int(self.dude_4), 
-                           6*self.height//8))
+        self.winnertime -= 1
+        if self.winnertime < 1:
+            self.setup_ingame()
+            self.current_scene = 0
         
         
 
 def main():
 
-  Amiral_8btn().run()
+  PitchCounter().run()
 
 if __name__ == '__main__':
   main()

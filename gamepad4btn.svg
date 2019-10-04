@@ -31,18 +31,18 @@
      objecttolerance="10"
      inkscape:pageopacity="0.94901961"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.87930808"
-     inkscape:cx="307.50025"
-     inkscape:cy="222.77086"
+     inkscape:zoom="0.62176471"
+     inkscape:cx="345.44807"
+     inkscape:cy="420.83322"
      inkscape:document-units="px"
-     inkscape:current-layer="layer3"
+     inkscape:current-layer="layer1"
      showgrid="true"
      width="800px"
      inkscape:showpageshadow="false"
      inkscape:snap-global="false"
      showguides="true"
-     inkscape:window-width="1853"
-     inkscape:window-height="1016"
+     inkscape:window-width="1533"
+     inkscape:window-height="845"
      inkscape:window-x="67"
      inkscape:window-y="27"
      showborder="true"
@@ -1073,7 +1073,7 @@
     </g>
     <g
        id="g10263"
-       transform="translate(18.16318,-2.2745101)">
+       transform="rotate(180,179.41841,147.89592)">
       <rect
          style="opacity:1;fill:#000000;fill-opacity:1;stroke:#b3b3b3;stroke-width:0.93000001;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:20.69999886;stroke-opacity:1;paint-order:markers fill stroke"
          id="rect10250"
@@ -1128,7 +1128,7 @@
          inkscape:transform-center-x="-8.392094" />
     </g>
     <g
-       transform="rotate(-180,496.41841,147.89592)"
+       transform="translate(652.16317,-2.2745052)"
        id="g10275">
       <rect
          style="opacity:1;fill:#000000;fill-opacity:1;stroke:#b3b3b3;stroke-width:0.93000001;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:20.69999886;stroke-opacity:1;paint-order:markers fill stroke"
@@ -1191,8 +1191,8 @@
      style="display:inline;opacity:0"
      sodipodi:insensitive="true">
     <path
-       style="opacity:0.51200005;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.74503005px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 503.48953,487.86662 2.23429,-387.23957 207.33526,1.13812 -0.98376,392.17632 z"
+       style="opacity:0.51200005;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.83319819px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 297.64586,186.6342 2.23429,-88.281673 207.33526,0.25946 -0.98376,89.407143 z"
        id="btnUP"
        class="btn"
        data-btn="path3253"
@@ -1201,8 +1201,8 @@
        inkscape:label="#btnUP"
        sodipodi:nodetypes="ccccc" />
     <path
-       style="opacity:0.49000005;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.70454359px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 720.22948,491.19342 -7.24882,-388.01881 210,-6.250249 -2.21841,394.667749 z"
+       style="opacity:0.49000005;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.81344879px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 721.29183,189.79489 -2.62488,-89.17257 210,-1.423446 -2.21841,89.882646 z"
        id="btnRIGHT"
        class="btn"
        data-btn="path3247"
@@ -1211,8 +1211,8 @@
        inkscape:label="#btnRIGHT"
        sodipodi:nodetypes="ccccc" />
     <path
-       style="opacity:0.51000001;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.75026327px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="M 285.7701,492.83165 79.347156,494.2506 82.567373,101.45585 289.34716,100.89559 Z"
+       style="opacity:0.51000001;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.35829017px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 292.59365,189.1419 86.170703,189.4655 89.39092,99.886102 296.17071,99.758334 Z"
        id="btnLEFT"
        class="btn"
        data-btn="path3237"
@@ -1227,8 +1227,44 @@
        data-btn="path3253"
        class="btn"
        id="btnDOWN"
-       d="m 293.64429,492.7832 -3.07404,-392.47795 208.54122,-0.10603 1.45878,393.52009 z"
-       style="opacity:0.51200005;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1.41705596px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+       d="m 510.86053,192.12139 -3.07404,-94.171233 208.54122,-0.0254 1.45878,94.421283 z"
+       style="opacity:0.51200005;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.69412625px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <path
+       sodipodi:nodetypes="ccccc"
+       inkscape:connector-curvature="0"
+       data-code="0x136"
+       data-btn="path3237"
+       class="btn"
+       id="BtnTl"
+       d="M 288.04462,495.43436 81.621672,496.52511 84.841889,194.5814 291.62168,194.15073 Z"
+       style="opacity:0.51000001;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.6577999px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <path
+       style="opacity:0.51000001;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.6577999px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 504.12361,495.43436 -206.42295,1.09075 3.22022,-301.94371 206.77979,-0.43067 z"
+       id="BtnTr"
+       class="btn"
+       data-btn="path3237"
+       data-code="0x137"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc" />
+    <path
+       sodipodi:nodetypes="ccccc"
+       inkscape:connector-curvature="0"
+       data-code="0x13a"
+       data-btn="path3237"
+       class="btn"
+       id="BtnSelect"
+       d="m 714.51631,495.43436 -206.42295,1.09075 3.22022,-301.94371 206.77979,-0.43067 z"
+       style="opacity:0.51000001;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.6577999px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    <path
+       style="opacity:0.51000001;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.6577999px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 923.77175,496.57162 -206.42295,1.09075 3.22022,-301.94371 206.77979,-0.43067 z"
+       id="BtnStart"
+       class="btn"
+       data-btn="path3237"
+       data-code="0x13b"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc" />
   </g>
   <g
      inkscape:groupmode="layer"
