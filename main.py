@@ -26,16 +26,7 @@ from murapix.murapix import Murapix, get_panel_adresses, get_deadzone_addresses,
 
 
 #%%Initialize global constants
-FPS = 60
-MAXSPEED = 60/FPS
-MAXSPEED_SQUARED = MAXSPEED**2
-MISSILE_SPEED = 5*60/FPS
-RIGHT, UP, LEFT, DOWN = range(4)
-direction = {pygame.K_UP: UP, pygame.K_DOWN: DOWN,
-             pygame.K_LEFT: LEFT, pygame.K_RIGHT: RIGHT}
-missile_direction = {None: (0, 0), UP: (0, -MISSILE_SPEED), DOWN: (0, MISSILE_SPEED),
-                     LEFT: (-MISSILE_SPEED, 0), RIGHT: (MISSILE_SPEED, 0)}
-
+FPS = 26
 EMOTYPES = dict(Broccoli="broccoli_8px.bmp",
                 Robot = "robot_8px.bmp",
                 SUW = "startupweekend_8px.bmp",
@@ -352,18 +343,13 @@ class PitchCounter(Murapix):
     def logic_loop(self):
         clock = self.clock
         self.scene_select[self.current_scene]()
-        #msg = "\r Raw time: {0}, tick time: {1}, fps: {2}".format(clock.get_rawtime(),
-        #                                                    clock.get_time(),
-        #                                                    clock.get_fps())
-        beg = ""
-        msg = ""
-        for i, s in enumerate(self.btn_queue):
-            beg += "\r"
-            msg += "{0}: queue = {1}\n".format(i, s['queue'])
+        msg = "\r Raw time: {0}, tick time: {1}, fps: {2}".format(clock.get_rawtime(),
+                                                            clock.get_time(),
+                                                            clock.get_fps())
+        print(msg, end="")
         
-        msg = beg + msg
         
-        #print(msg, end="")
+        
     def graphics_loop(self):
         pass
 
@@ -384,7 +370,7 @@ class PitchCounter(Murapix):
                 
         elif (last_keys[-1] == FACTORY) and (last_keys[-2] ==BROCCOLI):
             self.counter.switch_pause(set_it=True)
-            self.counter.set_timer(5*1)#TODO: fix to 60 seconds
+            self.counter.set_timer(60*1)
                 
         
             
